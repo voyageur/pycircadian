@@ -1,0 +1,14 @@
+[project]
+name = "pycircadian"
+version = "0.1"
+description = "Suspend-On-Idle Daemon for GNU/Linux Power Management"
+dependencies = [
+    "dbus-python",
+]
+
+[build-system]
+requires = ["setuptools >= 61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+pycircadian = "pycircadian.__main__:circadian_main"
