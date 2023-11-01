@@ -2,9 +2,19 @@ import dbus
 import logging
 import time
 
+ORG = "org.freedesktop.login1"
+PATH = "/org/freedesktop/login1"
+MANAGER_IFACE = "org.freedesktop.login1.Manager"
+SESSION_IFACE = "org.freedesktop.login1.Session"
+DBUS_PROP_IFACE = "org.freedesktop.DBus.Properties"
+
+# One month should be enough
+LONG_IDLE = 2678400
+
 system_bus = dbus.SystemBus()
-login1 = system_bus.get_object("org.freedesktop.login1","/org/freedesktop/login1")
-login_manager = dbus.Interface(login1,"org.freedesktop.login1.Manager")
+login1 = system_bus.get_object(ORG, PATH)
+login_manager = dbus.Interface(login1, MANAGER_IFACE)
+
 
 def unwrap_dbus(val):
     if isinstance(val, dbus.ByteArray):
@@ -21,26 +31,28 @@ def unwrap_dbus(val):
         return int(val)
     if isinstance(val, dbus.Byte):
         return bytes([int(val)])
-    return val 
+    return val
+
 
 def get_sessions():
     systemd_sessions = login_manager.ListSessions()
     sessions = []
     for session in systemd_sessions:
-        dbus_session = system_bus.get_object("org.freedesktop.login1",session[-1])
-        dbus_properties = dbus.Interface(dbus_session, 'org.freedesktop.DBus.Properties')
-        # dbus_properties.Get("org.freedesktop.login1.Session", "IdleSinceHint")
-        
-        session_infos = unwrap_dbus(dbus_properties.GetAll("org.freedesktop.login1.Session"))
+        dbus_session = system_bus.get_object(ORG, session[-1])
+        dbus_properties = dbus.Interface(dbus_session, DBUS_PROP_IFACE)
+        # dbus_properties.Get(SESSION_IFACE, "IdleSinceHint")
+
+        session_infos = unwrap_dbus(dbus_properties.GetAll(SESSION_IFACE))
         logging.debug("Found session: {0}".format(session_infos))
         sessions.append(session_infos)
     return sessions
 
+
 def get_min_idle_tty_sessions(sessions: list):
-    min_idle_tty = 2678400;
+    min_idle_tty = LONG_IDLE
     for session in sessions:
         if session["Type"] == "tty" and session["IdleHint"]:
             session_idle = int(time.clock_gettime(time.CLOCK_MONOTONIC) - session["IdleSinceHintMonotonic"] / 1e6)
             logging.debug("TTY session {0} idle for {1} seconds".format(session["Id"], session_idle))
             min_idle_tty = min(min_idle_tty, session_idle)
-    return min_idle_tty;
+    return min_idle_tty
