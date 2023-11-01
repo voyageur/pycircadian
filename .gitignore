@@ -1,0 +1,4 @@
+*.egg-info/
+.*.sw?
+.venv
+__pycache__/
