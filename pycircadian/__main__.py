@@ -9,7 +9,9 @@ def init_config():
 def get_all_idle():
     sessions = idle_sessions.get_sessions()
     min_idle_tty = idle_sessions.get_min_idle_tty_sessions(sessions)
-    print(min_idle_tty)
+    print("Min TTY idle: {0}".format(min_idle_tty))
+    min_idle_x11 = idle_sessions.get_min_idle_x11_sessions(sessions)
+    print("Min X11 idle: {0}".format(min_idle_x11))
 
 
 def circadian_main():
