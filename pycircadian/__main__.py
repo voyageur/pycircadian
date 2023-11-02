@@ -1,6 +1,5 @@
 from pycircadian import config
-from pycircadian import idle_sessions
-from pycircadian import process_block
+from pycircadian import cpu_load, idle_sessions, process_block
 
 
 def get_all_idle():
@@ -11,6 +10,8 @@ def get_all_idle():
     print("Min X11 idle: {0}".format(min_idle_x11))
     blocking_processes = process_block.check_blocking_processes()
     print("Blocking processes: {0}".format(blocking_processes))
+    system_loaded = cpu_load.check_load_avg()
+    print("System load below threshold: {0}".format(system_loaded))
 
 
 def circadian_main():

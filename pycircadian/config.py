@@ -24,6 +24,7 @@ def init_config():
 
     # TODO: actually load config file
     main_config = {
+        "max_cpu_load": 5,
         "process_block": re.compile("^dd$|^rsync$|^cp$|^mv$|^emerge$|^rdiff-backup$")
     }
 
