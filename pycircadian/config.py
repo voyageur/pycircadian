@@ -23,9 +23,12 @@ def init_config():
     logging.basicConfig(format='%(asctime)s %(message)s', level=level)
 
     # TODO: actually load config file
+    # TODO: generate net_block_regex from ssh_block/smb_block config
     main_config = {
         "max_cpu_load": 5,
-        "process_block": re.compile("^dd$|^rsync$|^cp$|^mv$|^emerge$|^rdiff-backup$")
+        "process_block": re.compile("^dd$|^rsync$|^cp$|^mv$|^emerge$|^rdiff-backup$"),
+        "net_block_regex": re.compile("(ssh|smb)d?"),
+        "nfs_block": True,
     }
 
     return main_config

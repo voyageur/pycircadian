@@ -1,7 +1,7 @@
 [project]
 name = "pycircadian"
 version = "0.1"
-description = "Suspend-On-Idle Daemon for GNU/Linux Power Management"
+description = "Suspend-On-Idle Daemon for GNU/Linux systemd"
 dependencies = [
     "dbus-python",
     "psutil",

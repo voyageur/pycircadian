@@ -1,5 +1,5 @@
 from pycircadian import config
-from pycircadian import cpu_load, idle_sessions, process_block
+from pycircadian import cpu_load, idle_sessions, net_connections, process_block
 
 
 def get_all_idle():
@@ -12,6 +12,8 @@ def get_all_idle():
     print("Blocking processes: {0}".format(blocking_processes))
     system_loaded = cpu_load.check_load_avg()
     print("System load below threshold: {0}".format(system_loaded))
+    active_net_connections = net_connections.check_net_connections()
+    print("Active network connections: {0}".format(active_net_connections))
 
 
 def circadian_main():
