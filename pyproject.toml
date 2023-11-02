@@ -4,6 +4,7 @@ version = "0.1"
 description = "Suspend-On-Idle Daemon for GNU/Linux Power Management"
 dependencies = [
     "dbus-python",
+    "psutil",
 ]
 
 [build-system]

@@ -36,7 +36,7 @@ def _unwrap_dbus(val):
     return val
 
 
-def get_sessions():
+def get_sessions() -> list:
     systemd_sessions = login_manager.ListSessions()
     sessions = []
     for session in systemd_sessions:
@@ -50,28 +50,28 @@ def get_sessions():
     return sessions
 
 
-def get_min_idle_tty_sessions(sessions: list):
+def get_min_idle_tty_sessions(sessions: list) -> int:
     min_idle_tty = LONG_IDLE
     for session in sessions:
         if session["Type"] == "tty" and session["IdleHint"]:
             session_idle = int(time.clock_gettime(time.CLOCK_MONOTONIC) - session["IdleSinceHintMonotonic"] / 1e6)
-            logging.debug("TTY session {0} idle for {1} seconds".format(session["Id"], session_idle))
+            logging.info("TTY session {0} idle for {1} seconds".format(session["Id"], session_idle))
             min_idle_tty = min(min_idle_tty, session_idle)
 
     return min_idle_tty
 
 
-def _run_x_command(command: list, env: dict):
+def _run_x_command(command: list, env: dict) -> int:
     retval = LONG_IDLE
     try:
         output = check_output(command, env=env)
         retval = int(int(output) / 1e3) + 1
     except (CalledProcessError, FileNotFoundError) as error:
-        logging.info("{0} run failed, error: {1}".format(command, error))
+        logging.error("{0} run failed, error: {1}".format(command, error))
     return retval
 
 
-def get_min_idle_x11_sessions(sessions: list):
+def get_min_idle_x11_sessions(sessions: list) -> int:
     min_idle_x11 = LONG_IDLE
     for session in sessions:
         if session["Type"] == "x11":
@@ -81,8 +81,8 @@ def get_min_idle_x11_sessions(sessions: list):
             # TODO: conditional run
             xprintidle = _run_x_command(["xprintidle"], user_env)
             xssstate = _run_x_command(["xssstate", "-i"], user_env)
-            logging.debug("X11 session {0} idle (xprintidle: {1}, xsssate: {2})"
-                          .format(session["Id"], xprintidle, xssstate))
+            logging.info("Found X11 session {0}, idle time: xprintidle={1}, xsssate={2})"
+                         .format(session["Id"], xprintidle, xssstate))
             min_idle_x11 = min(min_idle_x11, xprintidle, xssstate)
 
     return min_idle_x11

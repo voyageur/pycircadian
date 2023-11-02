@@ -1,9 +1,6 @@
-import logging
+from pycircadian import config
 from pycircadian import idle_sessions
-
-
-def init_config():
-    logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
+from pycircadian import process_block
 
 
 def get_all_idle():
@@ -12,10 +9,12 @@ def get_all_idle():
     print("Min TTY idle: {0}".format(min_idle_tty))
     min_idle_x11 = idle_sessions.get_min_idle_x11_sessions(sessions)
     print("Min X11 idle: {0}".format(min_idle_x11))
+    blocking_processes = process_block.check_blocking_processes()
+    print("Blocking processes: {0}".format(blocking_processes))
 
 
 def circadian_main():
-    init_config()
+    config.init_config()
     # TODO
     get_all_idle()
 
