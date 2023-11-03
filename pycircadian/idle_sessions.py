@@ -3,6 +3,7 @@ import logging
 import time
 from os.path import expanduser
 from subprocess import check_output, CalledProcessError
+from pycircadian import config
 
 ORG = "org.freedesktop.login1"
 PATH = "/org/freedesktop/login1"
@@ -52,6 +53,11 @@ def get_sessions() -> list:
 
 def get_min_idle_tty_sessions(sessions: list) -> int:
     min_idle_tty = LONG_IDLE
+
+    # Nothing to check 
+    if not config.main_config["tty_input"]:
+        return min_idle_tty
+
     for session in sessions:
         if session["Type"] == "tty" and session["IdleHint"]:
             session_idle = int(time.clock_gettime(time.CLOCK_MONOTONIC) - session["IdleSinceHintMonotonic"] / 1e6)
@@ -73,6 +79,11 @@ def _run_x_command(command: list, env: dict) -> int:
 
 def get_min_idle_x11_sessions(sessions: list) -> int:
     min_idle_x11 = LONG_IDLE
+
+    # Nothing to check 
+    if not config.main_config["x11_input"]:
+        return min_idle_x11
+
     for session in sessions:
         if session["Type"] == "x11":
             user_env = {"DISPLAY": session["Display"],
