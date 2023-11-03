@@ -1,0 +1,93 @@
+[settings]
+# Output log level
+# 0: warning level
+# 1: info level
+# 2: debug level
+# 
+# Default: 0
+verbosity = 0
+
+[idle_checks]
+# Whether TTY input on *any* TTY blocks idle. This includes X terminals,
+# virtual terminals, SSH sessions, etc. Resets whenever a TTY determines
+# that it has input, which is typically keypresses.
+#
+# Default: true
+tty_input = true
+
+# Whether X11 idle detection is used, the specifics of which are determined
+# by your particular combination of window/display manager. This is normally
+# any user input device (keyboard, mouse), but can additionally be reset
+# by certain programs. Typically, any program that prevents the screensaver
+# from displaying will also reset this.
+#
+# Default: true
+x11_input = true
+
+# Whether active SSH connections block the system from being idle. Both
+# inbound and outbound connections will prevent the system from going idle
+# if enabled.
+#
+# Default: true
+ssh_block = true
+
+# Whether active Samba connections block the system from being idle. Note
+# that GVfs sometimes makes local loopback connections to a local Samba
+# share, which will prevent idle. This is disabled by default because of
+# the aggressiveness of SMB browsing clients.
+#
+# Default: false
+smb_block = false
+
+# Whether active NFS connections block the system from being idle. Both
+# inbound and outbound connections will prevent the system from going idle
+# if active.
+#
+# Default: false
+nfs_block = false
+
+# Whether active audio playback blocks the system from being idle.
+#
+# Default: true
+audio_block = true
+
+# Max CPU load for the past minute to be considered idle. This is the
+# unscaled load, can go above 1.0 even on non-maxed multi-core systems.
+# Set to 999.0 or comment out to disable.
+#
+# Default: 5
+max_cpu_load = 5
+
+# Specific processes that block the system from being considered idle if
+# they are running. Supply as a regex, recommended way is a list of process
+# names separated by "|" character
+#
+# Example:
+#   process_block = "^(mpv|vlc)$"
+#
+# Default: some common file transfer utils
+process_block = "^(cp|dd|mv|rsync)$"
+
+[actions]
+# How long the system must be idle before the idle action is taken.
+#
+# Suffix:
+#  <none> - seconds
+#  m - minutes
+#  h - hours
+#  d - days
+#
+# Default: 2 hours
+idle_time = "2h"
+
+# systemcl action called when the system is determined to have been idle
+# for at least idle_time.
+#
+# Possible options:
+#  * suspend
+#  * hibernate
+#  * hybrid-sleep
+#  * suspend-then-hibernate
+#
+# Default: suspend
+on_idle = "suspend"

@@ -1,6 +1,23 @@
 import argparse
 import logging
 import re
+import sys
+import tomllib
+
+
+def _load_config_file(file_path: str) -> dict:
+    toml_config = {}
+    try:
+        with open(file_path, "rb") as f:
+            toml_config = tomllib.load(f)
+    except FileNotFoundError:
+        logging.critical("Configuration file \"{0}\" not found".format(file_path))
+        sys.exit(1)
+    except tomllib.TOMLDecodeError as toml_err:
+        logging.critical("Configuration file \"{0}\" incorrect format:\n    {1}".format(file_path, toml_err))
+        sys.exit(1)
+
+    return toml_config
 
 
 def init_config():
@@ -10,25 +27,76 @@ def init_config():
 
     parser.add_argument("-f", "--config", type=str, default="/etc/pycircadian.conf",
                         help="configuration file path (default: %(default)s)")
-    parser.add_argument("-v", "--verbosity", action="count", default=0,
+    parser.add_argument("-v", "--verbosity", action="count",
                         help="increase logging level (can be repeated for info/debug)")
 
     args = parser.parse_args()
 
+    file_conf = _load_config_file(args.config)
+
+    if (args.verbosity):
+        verbosity = args.verbosity
+    elif (file_conf.get("settings").get("verbosity")):
+        verbosity = file_conf.get("settings").get("verbosity")
+    else:
+        verbosity = 0
+
     level = logging.WARNING
-    if args.verbosity >= 2:
+    if verbosity >= 2:
         level = logging.DEBUG
-    elif args.verbosity >= 1:
+    elif verbosity >= 1:
         level = logging.INFO
     logging.basicConfig(format='%(asctime)s %(message)s', level=level)
 
-    # TODO: actually load config file
-    # TODO: generate net_block_regex from ssh_block/smb_block config
+    # Default options
     main_config = {
+        "tty_input": True,
+        "x11_input": True,
+        "net_block_regex": re.compile("(ssh)d?"),
+        "nfs_block": False,
+        "audio_block": True,
         "max_cpu_load": 5,
-        "process_block": re.compile("^dd$|^rsync$|^cp$|^mv$|^emerge$|^rdiff-backup$"),
-        "net_block_regex": re.compile("(ssh|smb)d?"),
-        "nfs_block": True,
+        "process_block": re.compile("^(cp|dd|mv|rsync)$"),
+        "idle_time": 7200,
+        "systemctl": "suspend"
     }
 
+    for entry in ["tty_input", "x11_input", "nfs_block", "audio_block"]:
+        value = file_conf.get("idle_checks").get(entry)
+        if value is not None:
+            main_config[entry] = value
+    conf_max_cpu_load = file_conf.get("idle_checks").get("max_cpu_load")
+    if conf_max_cpu_load:
+        main_config["max_cpu_load"] = float(conf_max_cpu_load)
+    conf_process_block = file_conf.get("idle_checks").get("process_block")
+    if isinstance(conf_process_block, str):
+        if conf_process_block != "":
+            main_config["process_block"] = re.compile(conf_process_block)
+        else:
+            main_config["process_block"] = None
+
+    # Regex for SSH/SMB
+    ssh_block = "ssh"
+    smb_block = None
+    if file_conf.get("idle_checks").get("ssh_block") is not None:
+        ssh_block = "ssh" if file_conf.get("idle_checks").get("ssh_block") else None
+    if file_conf.get("idle_checks").get("smb_block") is not None:
+        smb_block = "smb" if file_conf.get("idle_checks").get("smb_block") else None
+    if (ssh_block or smb_block):
+        main_config["net_block_regex"] = re.compile("({0})d?".format("|".join(filter(None, [ssh_block, smb_block]))))
+    else:
+        main_config["net_block_regex"] = None
+
+    idle_time = file_conf.get("actions").get("idle_time")
+    if idle_time:
+        seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+        main_config["idle_time"] = int(idle_time[:-1]) * seconds_per_unit[idle_time[-1]]
+    idle_action = file_conf.get("actions").get("on_idle")
+    if idle_action:
+        main_config["systemctl"] = idle_action
+
+    # TODO checks for xssstate etc
+
+    logging.info("Configuration loaded and valid")
+    logging.debug("Loaded config: {0}".format(main_config))
     return main_config

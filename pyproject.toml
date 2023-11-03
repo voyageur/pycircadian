@@ -6,6 +6,7 @@ dependencies = [
     "dbus-python",
     "psutil",
 ]
+requires-python = ">=3.11"
 
 [build-system]
 requires = ["setuptools >= 61.0.0"]

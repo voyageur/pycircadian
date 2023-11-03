@@ -8,6 +8,10 @@ def check_net_connections() -> bool:
     nfs_block = config.main_config["nfs_block"]
     net_block_regex = config.main_config["net_block_regex"]
 
+    # Nothing to check
+    if not (nfs_block or net_block_regex):
+        return False
+
     # Skip process names if we do not check SSH/SMB
     if net_block_regex:
         proc_names = {}
