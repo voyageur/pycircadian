@@ -60,7 +60,7 @@ max_cpu_load = 5
 
 # Specific processes that block the system from being considered idle if
 # they are running. Supply as a regex, recommended way is a list of process
-# names separated by "|" character
+# names separated by "|" character. Disable the check with ""
 #
 # Example:
 #   process_block = "^(mpv|vlc)$"
@@ -72,7 +72,7 @@ process_block = "^(cp|dd|mv|rsync)$"
 # How long the system must be idle before the idle action is taken.
 #
 # Suffix:
-#  <none> - seconds
+#  s - seconds
 #  m - minutes
 #  h - hours
 #  d - days

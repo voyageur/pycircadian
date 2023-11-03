@@ -1,0 +1,11 @@
+[Unit]
+Description=pycircadian suspend-on-idle daemon
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/pycircadian
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
