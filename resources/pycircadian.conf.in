@@ -84,10 +84,10 @@ idle_time = "2h"
 # for at least idle_time.
 #
 # Possible options:
-#  * suspend
-#  * hibernate
-#  * hybrid-sleep
-#  * suspend-then-hibernate
+#  * Suspend
+#  * Hibernate
+#  * HybridSleep
+#  * SuspendThenHibernate
 #
-# Default: suspend
-on_idle = "suspend"
+# Default: Suspend
+on_idle = "Suspend"

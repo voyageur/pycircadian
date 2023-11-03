@@ -58,7 +58,7 @@ def init_config():
         "max_cpu_load": 5,
         "process_block": re.compile("^(cp|dd|mv|rsync)$"),
         "idle_time": 7200,
-        "systemctl": "suspend"
+        "action": "suspend"
     }
 
     for entry in ["tty_input", "x11_input", "nfs_block", "audio_block"]:
@@ -93,9 +93,13 @@ def init_config():
         main_config["idle_time"] = int(idle_time[:-1]) * seconds_per_unit[idle_time[-1]]
     idle_action = file_conf.get("actions").get("on_idle")
     if idle_action:
-        main_config["systemctl"] = idle_action
+        main_config["action"] = idle_action
 
     # TODO checks for xssstate etc
+
+    if main_config["action"] not in ["Suspend", "Hibernate", "HybridSleep", "SuspendThenHibernate"]:
+        logging.critical("Incorrect idle action {0} in configuration file".format(main_config["action"]))
+        sys.exit(1)
 
     logging.info("Configuration loaded and valid")
     logging.debug("Loaded config: {0}".format(main_config))
