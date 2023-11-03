@@ -1,5 +1,6 @@
 from pycircadian import config
-from pycircadian import cpu_load, idle_actions, idle_sessions, net_connections, process_block
+from pycircadian import cpu_load, idle_actions, idle_sessions, net_connections, \
+    process_block, sound_block
 
 
 def get_all_idle():
@@ -14,6 +15,8 @@ def get_all_idle():
     print("System load above threshold: {0}".format(system_loaded))
     active_net_connections = net_connections.check_net_connections()
     print("Active network connections: {0}".format(active_net_connections))
+    active_sound = sound_block.check_sound()
+    print("Sound playing: {0}".format(active_sound))
     can_idle = idle_actions.can_run_action()
     print("Can execute idle action: {0}".format(can_idle))
 
