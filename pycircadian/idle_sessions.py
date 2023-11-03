@@ -54,7 +54,7 @@ def get_sessions() -> list:
 def get_min_idle_tty_sessions(sessions: list) -> int:
     min_idle_tty = LONG_IDLE
 
-    # Nothing to check 
+    # Nothing to check
     if not config.main_config["tty_input"]:
         return min_idle_tty
 
@@ -80,7 +80,7 @@ def _run_x_command(command: list, env: dict) -> int:
 def get_min_idle_x11_sessions(sessions: list) -> int:
     min_idle_x11 = LONG_IDLE
 
-    # Nothing to check 
+    # Nothing to check
     if not config.main_config["x11_input"]:
         return min_idle_x11
 
@@ -93,7 +93,7 @@ def get_min_idle_x11_sessions(sessions: list) -> int:
             xprintidle = _run_x_command(["xprintidle"], user_env)
             xssstate = _run_x_command(["xssstate", "-i"], user_env)
             logging.debug("Found X11 session {0}, idle time: xprintidle={1}, xsssate={2})"
-                         .format(session["Id"], xprintidle, xssstate))
+                          .format(session["Id"], xprintidle, xssstate))
             min_idle_x11 = min(min_idle_x11, xprintidle, xssstate)
 
     return min_idle_x11
