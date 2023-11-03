@@ -61,7 +61,7 @@ def get_min_idle_tty_sessions(sessions: list) -> int:
     for session in sessions:
         if session["Type"] == "tty" and session["IdleHint"]:
             session_idle = int(time.clock_gettime(time.CLOCK_MONOTONIC) - session["IdleSinceHintMonotonic"] / 1e6)
-            logging.info("TTY session {0} idle for {1} seconds".format(session["Id"], session_idle))
+            logging.debug("TTY session {0} idle for {1} seconds".format(session["Id"], session_idle))
             min_idle_tty = min(min_idle_tty, session_idle)
 
     return min_idle_tty
@@ -92,7 +92,7 @@ def get_min_idle_x11_sessions(sessions: list) -> int:
             # TODO: conditional run
             xprintidle = _run_x_command(["xprintidle"], user_env)
             xssstate = _run_x_command(["xssstate", "-i"], user_env)
-            logging.info("Found X11 session {0}, idle time: xprintidle={1}, xsssate={2})"
+            logging.debug("Found X11 session {0}, idle time: xprintidle={1}, xsssate={2})"
                          .format(session["Id"], xprintidle, xssstate))
             min_idle_x11 = min(min_idle_x11, xprintidle, xssstate)
 
