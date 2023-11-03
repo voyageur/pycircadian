@@ -11,7 +11,7 @@ def get_all_idle():
     blocking_processes = process_block.check_blocking_processes()
     print("Blocking processes: {0}".format(blocking_processes))
     system_loaded = cpu_load.check_load_avg()
-    print("System load below threshold: {0}".format(system_loaded))
+    print("System load above threshold: {0}".format(system_loaded))
     active_net_connections = net_connections.check_net_connections()
     print("Active network connections: {0}".format(active_net_connections))
     can_idle = idle_actions.can_run_action()
