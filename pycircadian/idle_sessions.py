@@ -38,8 +38,13 @@ def _unwrap_dbus(val):
 
 
 def get_sessions() -> list:
-    systemd_sessions = login_manager.ListSessions()
     sessions = []
+
+    # Nothing to check
+    if not (config.main_config["tty_input"] or config.main_config["x11_input"]):
+        return sessions
+
+    systemd_sessions = login_manager.ListSessions()
     for session in systemd_sessions:
         dbus_session = system_bus.get_object(ORG, session[-1])
         dbus_properties = dbus.Interface(dbus_session, DBUS_PROP_IFACE)
