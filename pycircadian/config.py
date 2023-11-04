@@ -46,7 +46,7 @@ def init_config():
         level = logging.DEBUG
     elif verbosity >= 1:
         level = logging.INFO
-    logging.basicConfig(format='%(asctime)s %(message)s', level=level)
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=level)
 
     # Default options
     main_config = {

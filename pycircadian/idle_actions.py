@@ -29,7 +29,6 @@ def can_run_action():
 def run_action():
     action_conf = config.main_config["action"]
     action = getattr(login_manager, action_conf)
-    if can_run_action():
-        logging.info("Invoking idle action {0}".format(action_conf))
-        # Non-interactive
-        action(False)
+    logging.info("Invoking idle action {0}".format(action_conf))
+    # Non-interactive
+    action(False)
