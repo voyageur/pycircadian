@@ -17,8 +17,8 @@ def circadian_main():
     main_loop = Event()
     while True:
         try:
-            check_all_idle()
             main_loop.wait(60)
+            check_all_idle()
         except KeyboardInterrupt:
             sysexit(0)
 
