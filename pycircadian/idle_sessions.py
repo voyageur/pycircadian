@@ -94,7 +94,6 @@ def get_min_idle_x11_sessions(sessions: list) -> int:
             user_env = {"DISPLAY": session["Display"],
                         "XAUTHORITY": expanduser("~{0}/.Xauthority".format(session["Name"]))
                         }
-            # TODO: conditional run
             xprintidle = _run_x_command(["xprintidle"], user_env)
             xssstate = _run_x_command(["xssstate", "-i"], user_env)
             logging.debug("Found X11 session {0}, idle time: xprintidle={1}, xsssate={2})"

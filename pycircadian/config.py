@@ -3,6 +3,7 @@ import logging
 import re
 import sys
 import tomllib
+from shutil import which
 
 
 def _load_config_file(file_path: str) -> dict:
@@ -100,11 +101,18 @@ def init_config():
     if idle_action:
         main_config["action"] = idle_action
 
-    # TODO checks for xssstate etc
-
     if main_config["action"] not in ["Suspend", "Hibernate", "HybridSleep", "SuspendThenHibernate"]:
         logging.critical("Incorrect idle action {0} in configuration file".format(main_config["action"]))
         sys.exit(1)
+
+    # Check external binaries
+    if main_config["x11_input"]:
+        if not which("xprintidle"):
+            logging.critical("X11 idle detection enable but missing xprintidle binary")
+            sys.exit(1)
+        if not which("xssstate"):
+            logging.critical("X11 idle detection enable but missing xssstate binary")
+            sys.exit(1)
 
     logging.info("Configuration loaded and valid")
     logging.debug("Loaded config: {0}".format(main_config))
