@@ -55,8 +55,8 @@ audio_block = true
 # unscaled load, can go above 1.0 even on non-maxed multi-core systems.
 # Set to 999.0 or comment out to disable.
 #
-# Default: 5
-max_cpu_load = 5
+# Default: 1
+max_cpu_load = 1
 
 # Specific processes that block the system from being considered idle if
 # they are running. Supply as a regex, recommended way is a list of process
@@ -79,6 +79,13 @@ process_block = "^(cp|dd|mv|rsync)$"
 #
 # Default: 2 hours
 idle_time = "2h"
+
+# How long before starting to check for an idle system
+# This can be useful when starting pycircardian at boot time.
+# Same syntax as idle_tme
+#
+# Default: 0s (do not wait)
+start_delay = "0s"
 
 # systemcl action called when the system is determined to have been idle
 # for at least idle_time.

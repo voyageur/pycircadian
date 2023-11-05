@@ -14,13 +14,14 @@ def circadian_main():
 
     signal(SIGUSR1, usr1_handler)
 
-    main_loop = Event()
-    while True:
-        try:
-            main_loop.wait(60)
+    try:
+        main_loop = Event()
+        main_loop.wait(config.main_config["start_delay"])
+        while True:
             check_all_idle()
-        except KeyboardInterrupt:
-            sysexit(0)
+            main_loop.wait(60)
+    except KeyboardInterrupt:
+        sysexit(0)
 
 
 if __name__ == "__main__":

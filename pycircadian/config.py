@@ -55,9 +55,10 @@ def init_config():
         "net_block_regex": re.compile("(ssh)d?"),
         "nfs_block": False,
         "audio_block": True,
-        "max_cpu_load": 5,
+        "max_cpu_load": 1,
         "process_block": re.compile("^(cp|dd|mv|rsync)$"),
         "idle_time": 7200,
+        "start_delay": 0,
         "action": "suspend"
     }
 
@@ -91,6 +92,10 @@ def init_config():
     if idle_time:
         seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400}
         main_config["idle_time"] = int(idle_time[:-1]) * seconds_per_unit[idle_time[-1]]
+    start_delay = file_conf.get("actions").get("start_delay")
+    if start_delay:
+        seconds_per_unit = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+        main_config["start_delay"] = int(start_delay[:-1]) * seconds_per_unit[start_delay[-1]]
     idle_action = file_conf.get("actions").get("on_idle")
     if idle_action:
         main_config["action"] = idle_action
